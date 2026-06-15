@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Local snapshots and secrets
+macos-dev-snapshot-*/
+*.asc
+*.gpg
+*.pem
+*.key
+.env
+.env.*
+
+# Editor
+.vscode/
+.idea/
