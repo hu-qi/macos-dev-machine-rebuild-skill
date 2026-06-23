@@ -1,71 +1,84 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-GO_VERSION="${GO_VERSION:-go1.26.4}"
-NODE_VERSION="${NODE_VERSION:-22.16.0}"
-PYTHON_VERSION="${PYTHON_VERSION:-3.13}"
-CONDA_ENV="${CONDA_ENV:-dev}"
-ALLOW_REMOTE_INSTALL="${ALLOW_REMOTE_INSTALL:-0}"
-
 log() { printf '\n[macos-rebuild] %s\n' "$*"; }
-need() { command -v "$1" >/dev/null 2>&1 || log "Missing command: $1"; }
+has() { command -v "$1" >/dev/null 2>&1; }
+version_line() { "$@" 2>/dev/null | head -n 1 || true; }
 
-log "Safe bootstrap mode. This script avoids remote shell execution by default."
-log "Set ALLOW_REMOTE_INSTALL=1 only after you have reviewed the commands and trust the sources."
+if [[ "$(uname -s)" != "Darwin" ]]; then
+  log "This audit is intended for macOS. Detected: $(uname -s)."
+  exit 1
+fi
 
-log "Check Xcode Command Line Tools"
-if ! xcode-select -p >/dev/null 2>&1; then
-  log "Run manually: xcode-select --install"
-else
+log "Audit-only mode: no remote installer will run and no configuration file will be changed."
+log "Review SKILL.md before making shell, SSH, GPG, Git, or package-manager changes."
+
+log "System"
+sw_vers || true
+printf 'Architecture: '; uname -m || true
+
+log "Xcode Command Line Tools"
+if xcode-select -p >/dev/null 2>&1; then
   xcode-select -p
-fi
-
-log "Check Homebrew"
-if ! command -v brew >/dev/null 2>&1; then
-  log "Install Homebrew manually from https://brew.sh/"
+  version_line git --version
+  version_line clang --version
 else
-  brew --version | head -n 1
+  log "Missing. Install manually: xcode-select --install"
 fi
 
-if command -v brew >/dev/null 2>&1; then
-  log "Install base packages with Homebrew"
-  brew install gnupg pinentry-mac || true
+log "Homebrew"
+if has brew; then
+  version_line brew --version
+  printf 'Homebrew prefix: '; brew --prefix || true
+  for package in gnupg pinentry-mac; do
+    if brew list --versions "$package" >/dev/null 2>&1; then
+      log "Installed package: $package"
+    else
+      log "Optional package not installed: $package"
+    fi
+  done
+else
+  log "Missing. Follow the official Homebrew installation instructions after reviewing the installer."
 fi
 
-log "Check Oh My Zsh"
-if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-  log "Install Oh My Zsh manually from https://ohmyz.sh/"
+log "Shell"
+printf 'Current shell: %s\n' "${SHELL:-unknown}"
+for file in "$HOME/.zshrc" "$HOME/.zprofile"; do
+  if [[ -f "$file" ]]; then
+    printf 'Found: %s\n' "$file"
+  else
+    printf 'Not found: %s\n' "$file"
+  fi
+done
+
+log "Identity configuration (presence only; no keys or secrets are printed)"
+for path in "$HOME/.ssh" "$HOME/.gnupg"; do
+  if [[ -e "$path" ]]; then
+    printf 'Found: %s\n' "$path"
+  else
+    printf 'Not found: %s\n' "$path"
+  fi
+done
+
+if has pinentry-mac; then
+  printf 'pinentry-mac path: %s\n' "$(command -v pinentry-mac)"
+fi
+if [[ -f "$HOME/.gnupg/gpg-agent.conf" ]]; then
+  log "Existing gpg-agent.conf detected and preserved. Back it up before making any edits."
 fi
 
-log "Check zsh-autosuggestions"
-ZSH_CUSTOM_DIR="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
-if [[ -d "$HOME/.oh-my-zsh" && ! -d "$ZSH_CUSTOM_DIR/plugins/zsh-autosuggestions" ]]; then
-  log "Run manually: git clone https://github.com/zsh-users/zsh-autosuggestions '$ZSH_CUSTOM_DIR/plugins/zsh-autosuggestions'"
-fi
+log "Runtime availability"
+for tool in git gpg go python python3 conda node npm bun; do
+  if has "$tool"; then
+    printf 'Available: %s (%s)\n' "$tool" "$(command -v "$tool")"
+  else
+    printf 'Missing: %s\n' "$tool"
+  fi
+done
 
-log "Configure GPG agent if gnupg is available"
-if command -v gpg >/dev/null 2>&1; then
-  mkdir -p "$HOME/.gnupg"
-  cat > "$HOME/.gnupg/gpg-agent.conf" <<'GPGEOF'
-pinentry-program /opt/homebrew/bin/pinentry-mac
-enable-ssh-support
-GPGEOF
-  find "$HOME/.gnupg" -type d -exec chmod 700 {} \;
-  find "$HOME/.gnupg" -type f -exec chmod 600 {} \;
-fi
-
-log "Runtime checks"
-need git
-need gpg
-need go
-need conda
-need node
-need npm
-need bun
-
-if [[ "$ALLOW_REMOTE_INSTALL" == "1" ]]; then
-  log "Remote install mode is enabled, but this script intentionally keeps remote installers manual."
-  log "Follow SKILL.md for GVM, Miniforge, NVM, Bun install commands after reviewing each source."
-fi
-
-log "Bootstrap checks finished. Restart terminal if you changed shell config, then run scripts/verify.sh"
+log "Next steps"
+printf '%s\n' \
+  '1. Confirm device-management, proxy, VPN, and company security requirements.' \
+  '2. Select only the runtimes needed by current projects.' \
+  '3. Back up existing configuration before edits.' \
+  '4. Run scripts/verify.sh after each completed setup stage.'
