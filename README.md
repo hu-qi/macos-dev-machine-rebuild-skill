@@ -1,49 +1,72 @@
 # macOS Dev Machine Rebuild Skill
 
-这是一个用于“从零重建 macOS 开发机”的可复现环境初始化 Skill。
+> An audit-first, reproducible workflow for rebuilding a macOS development machine — designed for humans and AI coding agents.
 
-## 来源与改编说明
+[中文](#中文说明) · [Skill](./SKILL.md) · [Security](./SECURITY.md) · [License](./LICENSE)
 
-本项目根据苏洋博客文章《从零重建 macOS 开发机：可复现的环境初始化流程》整理与改编。
+## What this is
 
-- 原文作者：苏洋 / soulteary
-- 原文发布时间：2026-06-14
-- 原文地址：http://soulteary.com/2026/06/14/rebuild-macos-dev-machine-from-scratch-reproducible-environment-setup.html
+`macos-dev-machine-rebuild-skill` turns a fresh or rebuilt Mac into a **reviewable, repeatable, and verifiable** developer-environment setup process.
 
-原文强调的核心方法是：不要只把开发机初始化看作“安装软件清单”，而要把它整理成可重建、可迁移、可验证的工程化流程。
+It covers Xcode Command Line Tools, Homebrew, Zsh, SSH/GPG and Git signing, plus Go, Python, Node.js, and Bun. It is intentionally **audit-first**: the supplied scripts inspect and validate a machine, but do not run remote installers or overwrite identity configuration.
 
-本仓库不是原文全文转载，而是面向 ChatGPT / AI Agent 使用场景，将原文内容整理为可复用 Skill，并补充脚本模板、验证清单、快照导出和安全注意事项。
-
-## 文件说明
-
-- `SKILL.md`：完整 Skill 说明，可直接放入 skills 目录。
-- `scripts/bootstrap.sh`：半自动初始化脚本模板。
-- `scripts/verify.sh`：环境验证脚本。
-- `scripts/export-snapshot.sh`：导出本机开发环境快照。
-
-## 使用方式
-
-先阅读 `SKILL.md`，再根据自己的网络、芯片、项目语言版本调整脚本中的变量。
+## Start here
 
 ```bash
+git clone https://github.com/hu-qi/macos-dev-machine-rebuild-skill.git
+cd macos-dev-machine-rebuild-skill
 chmod +x scripts/*.sh
-./scripts/verify.sh
-```
 
-初始化新机器时，可先审查脚本内容，再执行：
-
-```bash
+# Inspect the current machine and missing prerequisites
 ./scripts/bootstrap.sh
-```
 
-导出当前机器环境快照：
+# Validate the setup after you make reviewed changes
+./scripts/verify.sh
 
-```bash
+# Export a shareable, redacted-oriented environment snapshot
 ./scripts/export-snapshot.sh
 ```
 
-## 安全提醒
+Read [`SKILL.md`](./SKILL.md) before changing shell, SSH, GPG, Git, or package-manager settings.
 
-不要把 SSH 私钥、GPG 私钥、token、密码、真实账号凭据提交到仓库。
+## Repository layout
 
-执行 `curl | bash` 类命令前，请先确认来源可信，并根据自己的网络环境和公司 IT 规范进行调整。
+| Path | Purpose |
+| --- | --- |
+| [`SKILL.md`](./SKILL.md) | Canonical instruction source for an AI agent or a manual runbook. |
+| [`scripts/bootstrap.sh`](./scripts/bootstrap.sh) | Non-destructive readiness audit and setup guidance. |
+| [`scripts/verify.sh`](./scripts/verify.sh) | Post-setup validation for system, toolchain, and signing prerequisites. |
+| [`scripts/export-snapshot.sh`](./scripts/export-snapshot.sh) | Exports a minimal environment snapshot without private keys or full Git config. |
+| [`SECURITY.md`](./SECURITY.md) | Reporting path and safe-use requirements. |
+| [`NOTICE`](./NOTICE) | Attribution and license-scope clarification. |
+
+## AI-agent compatibility
+
+`SKILL.md` is the canonical source of truth. It uses standard YAML frontmatter and an explicit, step-by-step procedure so it can be consumed directly as a Skill or translated into tool-specific instruction formats.
+
+Keep implementation-specific mirrors generated from this file rather than maintaining multiple divergent copies.
+
+## Safety model
+
+- **No secret material in the repository.** Do not commit private SSH/GPG keys, recovery codes, tokens, passwords, or raw configuration exports.
+- **No hidden remote execution.** Review any downloaded installer before running it.
+- **No destructive identity changes by default.** Back up and inspect existing `~/.ssh`, `~/.gnupg`, Git, and shell configuration before editing.
+- **Snapshots are reviewable artifacts.** Check generated files before sharing or committing them.
+
+## Attribution
+
+The project is an independent, AI-agent-oriented reorganization of the methodology described by Su Yang (soulteary) in “从零重建 macOS 开发机：可复现的环境初始化流程”, published on 2026-06-14. It is not a full-text reproduction. See [`NOTICE`](./NOTICE) for attribution and license scope.
+
+## License
+
+The repository's original code and documentation are released under the [MIT License](./LICENSE). Third-party content remains subject to its respective rights and terms.
+
+---
+
+## 中文说明
+
+这是一个用于“从零重建 macOS 开发机”的可复现初始化 Skill。它将新机或重装后的环境恢复过程整理为：**先盘点、再审查、后执行、可验证、可导出快照**的流程。
+
+覆盖 Xcode CLI、Homebrew、Zsh、SSH/GPG、Git 签名，以及 Go、Python、Node.js、Bun 等常用运行时。仓库内脚本默认只做环境检查和验证，不会自动执行远程安装命令，也不会覆盖已有身份配置。
+
+建议顺序：先阅读 [`SKILL.md`](./SKILL.md)，运行 `./scripts/bootstrap.sh` 盘点环境；按自己的项目、网络和公司 IT 要求完成安装或配置；最后使用 `./scripts/verify.sh` 验证，并按需通过 `./scripts/export-snapshot.sh` 导出已脱敏方向的环境快照。
