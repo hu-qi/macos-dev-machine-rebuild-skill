@@ -1,0 +1,8 @@
+# Attribution and license scope
+
+This repository is an independent, AI-agent-oriented implementation created by Hu Qi.
+
+It was informed by and attributes its original methodology to Su Yang (soulteary), "从零重建 macOS 开发机：可复现的环境初始化流程" (published 2026-06-14):
+http://soulteary.com/2026/06/14/rebuild-macos-dev-machine-from-scratch-reproducible-environment-setup.html
+
+The MIT License in this repository applies to Hu Qi's original code and documentation contributions. It does not grant rights to third-party works, trademarks, or content that may remain subject to their respective owners' terms.
