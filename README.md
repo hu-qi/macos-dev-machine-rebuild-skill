@@ -2,7 +2,7 @@
 
 > An audit-first, reproducible workflow for rebuilding a macOS development machine — designed for humans and AI coding agents.
 
-[中文](#中文说明) · [Skill](./SKILL.md) · [Security](./SECURITY.md) · [License](./LICENSE)
+[中文文档](./README-zh.md) · [Skill](./SKILL.md) · [Security](./SECURITY.md) · [License](./LICENSE)
 
 ## What this is
 
@@ -33,6 +33,7 @@ Read [`SKILL.md`](./SKILL.md) before changing shell, SSH, GPG, Git, or package-m
 
 | Path | Purpose |
 | --- | --- |
+| [`README-zh.md`](./README-zh.md) | Full Chinese documentation. |
 | [`SKILL.md`](./SKILL.md) | Canonical instruction source for an AI agent or a manual runbook. |
 | [`scripts/bootstrap.sh`](./scripts/bootstrap.sh) | Non-destructive readiness audit and setup guidance. |
 | [`scripts/verify.sh`](./scripts/verify.sh) | Post-setup validation for system, toolchain, and signing prerequisites. |
@@ -60,13 +61,3 @@ The project is an independent, AI-agent-oriented reorganization of the methodolo
 ## License
 
 The repository's original code and documentation are released under the [MIT License](./LICENSE). Third-party content remains subject to its respective rights and terms.
-
----
-
-## 中文说明
-
-这是一个用于“从零重建 macOS 开发机”的可复现初始化 Skill。它将新机或重装后的环境恢复过程整理为：**先盘点、再审查、后执行、可验证、可导出快照**的流程。
-
-覆盖 Xcode CLI、Homebrew、Zsh、SSH/GPG、Git 签名，以及 Go、Python、Node.js、Bun 等常用运行时。仓库内脚本默认只做环境检查和验证，不会自动执行远程安装命令，也不会覆盖已有身份配置。
-
-建议顺序：先阅读 [`SKILL.md`](./SKILL.md)，运行 `./scripts/bootstrap.sh` 盘点环境；按自己的项目、网络和公司 IT 要求完成安装或配置；最后使用 `./scripts/verify.sh` 验证，并按需通过 `./scripts/export-snapshot.sh` 导出已脱敏方向的环境快照。
