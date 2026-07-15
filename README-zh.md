@@ -2,7 +2,7 @@
 
 > 面向开发者与 AI 编程 Agent 的 macOS 开发环境重建流程：**先盘点、再审查、后执行、可验证、可回滚**。
 
-[English](./README.md) · [完整 Skill](./SKILL.md) · [安全说明](./SECURITY.md) · [授权协议](./LICENSE) · [归属说明](./NOTICE)
+[English](./README.md) · [完整 Skill](./skills/macos-dev-machine-rebuild/SKILL.md) · [安全说明](./SECURITY.md) · [授权协议](./LICENSE) · [归属说明](./NOTICE)
 
 ## 目录
 
@@ -91,13 +91,13 @@ Go、Python、Node.js、Bun 不应仅凭“当前最新版本”来安装。优�
 ```bash
 git clone https://github.com/hu-qi/macos-dev-machine-rebuild-skill.git
 cd macos-dev-machine-rebuild-skill
-chmod +x scripts/*.sh
+chmod +x skills/macos-dev-machine-rebuild/scripts/*.sh
 ```
 
 先运行环境盘点脚本：
 
 ```bash
-./scripts/bootstrap.sh
+./skills/macos-dev-machine-rebuild/scripts/bootstrap.sh
 ```
 
 它会检查 macOS 版本、CPU 架构、Xcode CLI、Homebrew、Shell 配置、SSH/GPG 配置目录及常见运行时是否存在。它不会自动安装软件、不会执行远程安装器、不会改写任何配置文件。
@@ -105,16 +105,16 @@ chmod +x scripts/*.sh
 完成你确认过的配置后，再运行验证：
 
 ```bash
-./scripts/verify.sh
+./skills/macos-dev-machine-rebuild/scripts/verify.sh
 ```
 
 需要记录当前机器的可复现信息时，再导出快照：
 
 ```bash
-./scripts/export-snapshot.sh
+./skills/macos-dev-machine-rebuild/scripts/export-snapshot.sh
 ```
 
-> 开始修改 Shell、SSH、GPG、Git 或包管理器设置前，请先阅读 [`SKILL.md`](./SKILL.md)。
+> 开始修改 Shell、SSH、GPG、Git 或包管理器设置前，请先阅读 [`skills/macos-dev-machine-rebuild/SKILL.md`](./skills/macos-dev-machine-rebuild/SKILL.md)。
 
 ## 仓库结构
 
@@ -122,10 +122,10 @@ chmod +x scripts/*.sh
 | --- | --- |
 | [`README.md`](./README.md) | 英文 README，面向全球开发者和 AI 配置平台。 |
 | [`README-zh.md`](./README-zh.md) | 中文完整说明。 |
-| [`SKILL.md`](./SKILL.md) | Skill 的唯一事实来源，供 AI Agent 或人工操作流程使用。 |
-| [`scripts/bootstrap.sh`](./scripts/bootstrap.sh) | 只读式环境盘点和下一步指引。 |
-| [`scripts/verify.sh`](./scripts/verify.sh) | 安装或配置后的环境验证脚本。 |
-| [`scripts/export-snapshot.sh`](./scripts/export-snapshot.sh) | 导出最小化、待人工复核的环境快照。 |
+| [`skills/macos-dev-machine-rebuild/SKILL.md`](./skills/macos-dev-machine-rebuild/SKILL.md) | Skill 的唯一事实来源，供 AI Agent 或人工操作流程使用。 |
+| [`skills/macos-dev-machine-rebuild/scripts/bootstrap.sh`](./skills/macos-dev-machine-rebuild/scripts/bootstrap.sh) | 只读式环境盘点和下一步指引。 |
+| [`skills/macos-dev-machine-rebuild/scripts/verify.sh`](./skills/macos-dev-machine-rebuild/scripts/verify.sh) | 安装或配置后的环境验证脚本。 |
+| [`skills/macos-dev-machine-rebuild/scripts/export-snapshot.sh`](./skills/macos-dev-machine-rebuild/scripts/export-snapshot.sh) | 导出最小化、待人工复核的环境快照。 |
 | [`SECURITY.md`](./SECURITY.md) | 凭据、私钥、敏感配置与漏洞反馈规则。 |
 | [`NOTICE`](./NOTICE) | 来源归属与许可范围说明。 |
 | [`LICENSE`](./LICENSE) | MIT 许可证。 |
@@ -149,7 +149,7 @@ chmod +x scripts/*.sh
 运行：
 
 ```bash
-./scripts/bootstrap.sh
+./skills/macos-dev-machine-rebuild/scripts/bootstrap.sh
 ```
 
 重点确认：
@@ -186,7 +186,7 @@ chmod +x scripts/*.sh
 确认环境可以正常使用后：
 
 ```bash
-./scripts/export-snapshot.sh
+./skills/macos-dev-machine-rebuild/scripts/export-snapshot.sh
 ```
 
 快照目录默认创建在用户主目录下，名称类似：
@@ -352,7 +352,7 @@ bun --version
 运行：
 
 ```bash
-./scripts/verify.sh
+./skills/macos-dev-machine-rebuild/scripts/verify.sh
 ```
 
 它会检查：
@@ -371,7 +371,7 @@ bun --version
 运行：
 
 ```bash
-./scripts/export-snapshot.sh
+./skills/macos-dev-machine-rebuild/scripts/export-snapshot.sh
 ```
 
 快照通常包含：
@@ -392,14 +392,14 @@ bun --version
 
 ## AI Agent 使用方式
 
-[`SKILL.md`](./SKILL.md) 是唯一事实来源。它采用标准 YAML frontmatter 和明确的操作约束，可作为 AI Agent 的系统化执行指引。
+[`skills/macos-dev-machine-rebuild/SKILL.md`](./skills/macos-dev-machine-rebuild/SKILL.md) 是唯一事实来源。它采用标准 YAML frontmatter 和明确的操作约束，可作为 AI Agent 的系统化执行指引。
 
 推荐做法：
 
-1. 将 `SKILL.md` 作为原始规范；
+1. 将 `skills/macos-dev-machine-rebuild/SKILL.md` 作为原始规范；
 2. 根据 Claude Code、Cursor、Copilot、Gemini CLI、Windsurf 等工具的格式生成或转换镜像文件；
 3. 不要在多个格式文件中分别维护不同内容；
-4. 更新规则时先修改 `SKILL.md`，再同步生成对应格式；
+4. 更新规则时先修改 `skills/macos-dev-machine-rebuild/SKILL.md`，再同步生成对应格式；
 5. 任何 Agent 都不应绕过本 Skill 中的安全规则，尤其是私钥、Token、远程执行和已有配置覆盖限制。
 
 ## 常见问题
